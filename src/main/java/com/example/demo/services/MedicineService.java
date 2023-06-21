@@ -25,12 +25,9 @@ public class MedicineService {
 
     @Transactional
     public Medicine createMedicine(Medicine medicine){
-        Long id = medicine.getId();
-        if (id != null){
-            repository.findById(id).ifPresent(__ -> {
-                throw new IllegalArgumentException();
-            });
-        }
+        repository.findById(medicine.getId()).ifPresent(__ -> {
+            throw new IllegalArgumentException();
+        });
         return repository.save(medicine);
     }
 

@@ -1,13 +1,11 @@
-package com.example.demo.controllers;
+package com.example.demo.controller;
 
 import com.example.demo.model.Medicine;
 import com.example.demo.services.MedicineService;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/medicine")
@@ -17,7 +15,6 @@ public class MedicineController {
     public MedicineController(MedicineService service) {
         this.service = service;
     }
-
 
     @GetMapping("/")
     public List<Medicine> getAllMedicine(){
@@ -36,11 +33,7 @@ public class MedicineController {
 
     @PutMapping("/{id}")
     public Medicine putMedicine(@PathVariable Long id, @RequestBody Medicine medicine){
-        if (medicine.getId() == null){
-            medicine.setId(id);
-        }
-
-        if (medicine.getId() != id){
+        if (!Objects.equals(medicine.getId(), id)){
             throw new IllegalArgumentException();
         }
 
