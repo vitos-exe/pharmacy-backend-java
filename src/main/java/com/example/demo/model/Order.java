@@ -26,6 +26,9 @@ public class Order {
     @OneToMany(mappedBy = "id.order")
     private List<OrderItem> orderItems;
 
+    @ManyToOne
+    private User user;
+
     public enum Status{
         PENDING,
         DELIVERED;

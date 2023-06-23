@@ -5,6 +5,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderItem;
 import com.example.demo.repository.MedicineRepository;
 import com.example.demo.repository.OrderRepository;
+import com.example.demo.security.IdentityProvider;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +17,12 @@ import java.util.NoSuchElementException;
 public class OrderService {
     OrderRepository orderRepository;
     MedicineRepository medicineRepository;
+    IdentityProvider identityProvider;
 
-    public OrderService(OrderRepository orderRepository, MedicineRepository medicineRepository) {
+    public OrderService(OrderRepository orderRepository, MedicineRepository medicineRepository, IdentityProvider identityProvider) {
         this.orderRepository = orderRepository;
         this.medicineRepository = medicineRepository;
+        this.identityProvider = identityProvider;
     }
 
     public List<Order> getAllOrders(LocalDate startDate, LocalDate endDate) {
@@ -35,7 +38,11 @@ public class OrderService {
     }
 
     public Order getOrderById(Long id){
-        return orderRepository.findById(id).orElseThrow();
+        Order order = orderRepository.findById(id).orElseThrow();
+        if (order.getUser().getId().equals(identityProvider.getCurrentIdentity().getId())){
+            throw new SecurityException();
+        }
+        return order;
     }
 
     @Transactional
@@ -50,7 +57,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(List<OrderItem.Projection> orderItemsProjections){
+    public Order createOrderFromItems(List<OrderItem.Projection> orderItemsProjections){
         Order newOrder = new Order();
         List<OrderItem> orderItems = orderItemsProjections.stream().map(item -> {
             Medicine medicine = medicineRepository.findByName(item.medicineName()).orElseThrow();
@@ -63,6 +70,7 @@ public class OrderService {
                     item.quantity()
             );
         }).toList();
+        newOrder.setUser(identityProvider.getCurrentIdentity());
         newOrder.setOrderItems(orderItems);
         return orderRepository.save(newOrder);
     }

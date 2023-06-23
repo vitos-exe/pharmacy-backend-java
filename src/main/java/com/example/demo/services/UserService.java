@@ -36,6 +36,10 @@ public class UserService{
         return repository.findById(id).orElseThrow();
     }
 
+    public User getUserByEmail(String emailAddress){
+        return repository.findByEmailAddress(emailAddress).orElseThrow(); //TODO this should not happen, fix
+    }
+
     @Transactional
     public User createUser(User user){
         Long id = user.getId();
@@ -71,6 +75,7 @@ public class UserService{
         );
     }
 
+    // TODO replace this with just initial data
     // Produces development bean, that has in-memory users to match credentials
     @Bean
     @ConditionalOnProperty(

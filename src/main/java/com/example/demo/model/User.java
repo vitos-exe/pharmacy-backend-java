@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Table(name = "\"user\"")
@@ -35,6 +36,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
+
+    @OneToMany
+    private Set<Order> orders;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
