@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 @Service
 @Configuration
 public class UserService implements UserDetailsService{
+    private final static Supplier<NoSuchElementException> userNotFoundSupplier =
+            () -> new NoSuchElementException("User was not found");
     UserRepository repository;
     PasswordEncoder encoder;
     IdentityHolder identityHolder;
@@ -37,7 +41,7 @@ public class UserService implements UserDetailsService{
     }
 
     public User getUserByEmail(String emailAddress){
-        return repository.findByEmailAddress(emailAddress).orElseThrow();
+        return repository.findByEmailAddress(emailAddress).orElseThrow(userNotFoundSupplier);
     }
 
     @Transactional
@@ -45,7 +49,7 @@ public class UserService implements UserDetailsService{
         Long id = user.getId();
         if (id != null){
             repository.findById(id).ifPresent(__ -> {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("User with such id already exists");
             });
         }
         user.setPassword(encoder.encode(user.getPassword()));
@@ -56,13 +60,17 @@ public class UserService implements UserDetailsService{
     public User updateUser(User user){
         Utils.verifyResourceAccess(user.getId(), identityHolder.getIdentity());
         user.setPassword(encoder.encode(user.getPassword()));
-        return repository.findById(user.getId()).map(repository::save).orElseThrow();
+        repository.findById(user.getId()).ifPresentOrElse(
+                __ -> repository.save(user),
+                () -> {throw userNotFoundSupplier.get();}
+        );
+        return user;
     }
 
     @Transactional
     public void deleteUserById(Long id){
         Utils.verifyResourceAccess(id, identityHolder.getIdentity());
-        repository.delete(repository.findById(id).orElseThrow());
+        repository.delete(repository.findById(id).orElseThrow(userNotFoundSupplier));
     }
 
     @Override
