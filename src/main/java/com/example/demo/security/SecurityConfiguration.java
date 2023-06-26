@@ -25,8 +25,9 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.authorizeHttpRequests(authorize -> {
             authorize
+                    .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.GET, "/medicine/*").permitAll()
-                    .requestMatchers("/medicine/*").hasAuthority(User.Role.ADMIN.getAuthority());
+                    .requestMatchers("/medicine/*").hasRole(User.Role.ADMIN.toString());
         }).csrf(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults()).build();
     }
 

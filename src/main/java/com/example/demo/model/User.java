@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<Order> orders;
 
     @Override
@@ -76,7 +76,7 @@ public class User implements UserDetails {
 
         @Override
         public String getAuthority() {
-            return this.toString();
+            return "ROLE_" + this.toString();
         }
     }
 }

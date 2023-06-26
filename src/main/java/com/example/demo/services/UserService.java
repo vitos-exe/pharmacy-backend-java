@@ -2,14 +2,11 @@ package com.example.demo.services;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +14,7 @@ import java.util.List;
 
 @Service
 @Configuration
-public class UserService{
+public class UserService implements UserDetailsService{
 
     UserRepository repository;
 
@@ -37,7 +34,7 @@ public class UserService{
     }
 
     public User getUserByEmail(String emailAddress){
-        return repository.findByEmailAddress(emailAddress).orElseThrow(); //TODO this should not happen, fix
+        return repository.findByEmailAddress(emailAddress).orElseThrow();
     }
 
     @Transactional
@@ -63,41 +60,10 @@ public class UserService{
         repository.delete(repository.findById(id).orElseThrow());
     }
 
-    // Produces UserDetailsService production bean, that uses JDBC to match user credentials for authentication
-    @Bean
-    @ConditionalOnProperty(
-            value = "spring.profiles.active",
-            havingValue = "prod"
-    )
-    public UserDetailsService jdbcUserDetailsService(){
-        return emailAddress -> repository.findByEmailAddress(emailAddress).orElseThrow(
+    @Override
+    public UserDetails loadUserByUsername(String emailAddress) throws UsernameNotFoundException {
+        return repository.findByEmailAddress(emailAddress).orElseThrow(
                 () -> new UsernameNotFoundException("Username not found")
         );
-    }
-
-    // TODO replace this with just initial data
-    // Produces development bean, that has in-memory users to match credentials
-    @Bean
-    @ConditionalOnProperty(
-            value = "spring.profiles.active",
-            havingValue = "dev",
-            matchIfMissing = true
-    )
-    public UserDetailsService inmemoryUserDetailsService(PasswordEncoder encoder){
-        UserDetails user = org.springframework.security.core.userdetails.User.builder()
-                .username("user@example.com")
-                .password("12345")
-                .authorities(User.Role.USER)
-                .passwordEncoder(encoder::encode)
-                .build();
-
-        UserDetails admin = org.springframework.security.core.userdetails.User.builder()
-                .username("admin@example.com")
-                .password("12345")
-                .authorities(User.Role.ADMIN)
-                .passwordEncoder(encoder::encode)
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
     }
 }
