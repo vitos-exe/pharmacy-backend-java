@@ -5,7 +5,7 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderItem;
 import com.example.demo.repository.MedicineRepository;
 import com.example.demo.repository.OrderRepository;
-import com.example.demo.security.IdentityProvider;
+import com.example.demo.security.IdentityHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +17,12 @@ import java.util.NoSuchElementException;
 public class OrderService {
     OrderRepository orderRepository;
     MedicineRepository medicineRepository;
-    IdentityProvider identityProvider;
+    IdentityHolder identityHolder;
 
-    public OrderService(OrderRepository orderRepository, MedicineRepository medicineRepository, IdentityProvider identityProvider) {
+    public OrderService(OrderRepository orderRepository, MedicineRepository medicineRepository, IdentityHolder identityHolder) {
         this.orderRepository = orderRepository;
         this.medicineRepository = medicineRepository;
-        this.identityProvider = identityProvider;
+        this.identityHolder = identityHolder;
     }
 
     public List<Order> getAllOrders(LocalDate startDate, LocalDate endDate) {
@@ -39,7 +39,7 @@ public class OrderService {
 
     public Order getOrderById(Long id){
         Order order = orderRepository.findById(id).orElseThrow();
-        if (order.getUser().getId().equals(identityProvider.getCurrentIdentity().getId())){
+        if (order.getUser().getId().equals(identityHolder.getIdentity().getId())){
             throw new SecurityException();
         }
         return order;
@@ -70,7 +70,7 @@ public class OrderService {
                     item.quantity()
             );
         }).toList();
-        newOrder.setUser(identityProvider.getCurrentIdentity());
+        newOrder.setUser(identityHolder.getIdentity());
         newOrder.setOrderItems(orderItems);
         return orderRepository.save(newOrder);
     }
