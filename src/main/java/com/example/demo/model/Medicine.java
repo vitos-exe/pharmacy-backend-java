@@ -21,7 +21,7 @@ public class Medicine {
     private Integer quantity;
 
     @Column(nullable = false)
-    private Float price;
+    private Double price;
 
     @Column
     private String description;
