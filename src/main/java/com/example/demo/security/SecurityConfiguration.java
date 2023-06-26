@@ -27,7 +27,10 @@ public class SecurityConfiguration {
             authorize
                     .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.GET, "/medicine/*").permitAll()
-                    .requestMatchers("/medicine/*").hasRole(User.Role.ADMIN.toString());
+                    .requestMatchers("/medicine/*").hasRole(User.Role.ADMIN.toString())
+                    .requestMatchers("/order/*").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/order/").hasRole(User.Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.PATCH, "/order/**").hasRole(User.Role.ADMIN.toString());
         }).csrf(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults()).build();
     }
 

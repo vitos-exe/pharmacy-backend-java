@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.security.Utils;
 import com.example.demo.model.Medicine;
 import com.example.demo.model.Order;
 import com.example.demo.model.OrderItem;
@@ -12,9 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Supplier;
 
 @Service
 public class OrderService {
+    private final static Supplier<NoSuchElementException> orderNotFoundSupplier =
+            () -> new NoSuchElementException("Order was not found");
+
     OrderRepository orderRepository;
     MedicineRepository medicineRepository;
     IdentityHolder identityHolder;
@@ -38,21 +43,16 @@ public class OrderService {
     }
 
     public Order getOrderById(Long id){
-        Order order = orderRepository.findById(id).orElseThrow();
-        if (order.getUser().getId().equals(identityHolder.getIdentity().getId())){
-            throw new SecurityException();
-        }
+        Order order = orderRepository.findById(id).orElseThrow(orderNotFoundSupplier);
+        Utils.verifyResourceAccess(order.getUser().getId(), identityHolder.getIdentity());
         return order;
     }
 
     @Transactional
     public void changeOrderStatus(Long id){
         orderRepository.findById(id).ifPresentOrElse(
-                order -> {
-                    order.setStatus(order.getStatus().opposite());
-                    orderRepository.save(order);
-                },
-                () -> {throw new NoSuchElementException();}
+                order -> order.setStatus(order.getStatus().opposite()),
+                () -> {throw orderNotFoundSupplier.get();}
         );
     }
 

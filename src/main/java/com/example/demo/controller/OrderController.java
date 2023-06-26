@@ -2,10 +2,9 @@ package com.example.demo.controller;
 
 
 import com.example.demo.model.Order;
+import com.example.demo.model.OrderItem;
 import com.example.demo.services.OrderService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,10 +18,26 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    @GetMapping("/")
     public List<Order> getAllOrders(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate)
     {
         return orderService.getAllOrders(startDate, endDate);
     };
+
+    @GetMapping("/{id}")
+    public Order getOrderById(@RequestParam Long id){
+        return orderService.getOrderById(id);
+    }
+
+    @PostMapping("/")
+    public Order postOrder(@RequestBody List<OrderItem.Projection> projections){
+        return orderService.createOrderFromItems(projections);
+    }
+
+    @PatchMapping("/{id}/status")
+    public void putOrderStatus(@RequestParam Long id){
+        orderService.changeOrderStatus(id);
+    }
 }
