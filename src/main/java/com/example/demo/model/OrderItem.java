@@ -1,8 +1,10 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -13,11 +15,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class OrderItem {
     @Embeddable
-    @Data
+    @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderItemPrimaryKey implements Serializable {
         @ManyToOne
+        @JsonBackReference
         private Order order;
 
         @ManyToOne

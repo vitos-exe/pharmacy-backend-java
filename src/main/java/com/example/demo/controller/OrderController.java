@@ -27,7 +27,7 @@ public class OrderController {
     };
 
     @GetMapping("/{id}")
-    public Order getOrderById(@RequestParam Long id){
+    public Order getOrderById(@PathVariable Long id){
         return orderService.getOrderById(id);
     }
 
@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/status")
-    public void putOrderStatus(@RequestParam Long id){
+    public void putOrderStatus(@PathVariable Long id){
         orderService.changeOrderStatus(id);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,7 +26,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
-    @OneToMany(mappedBy = "id.order")
+    @OneToMany(mappedBy = "id.order", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<OrderItem> orderItems;
 
     @ManyToOne

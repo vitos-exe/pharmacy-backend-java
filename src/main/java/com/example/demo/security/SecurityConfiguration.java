@@ -2,7 +2,6 @@ package com.example.demo.security;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
-import com.example.demo.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -16,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.NoSuchElementException;
 import java.util.Objects;
 
 @Configuration
@@ -29,10 +27,12 @@ public class SecurityConfiguration {
                     .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.GET, "/medicine/*").permitAll()
                     .requestMatchers("/medicine/*").hasRole(User.Role.ADMIN.toString())
-                    .requestMatchers("/order/*").authenticated()
-                    .requestMatchers(HttpMethod.POST, "/order/").hasRole(User.Role.ADMIN.toString())
-                    .requestMatchers(HttpMethod.PATCH, "/order/**").hasRole(User.Role.ADMIN.toString())
+                    .requestMatchers("/order/{id}").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/order/").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/order/").hasRole(User.Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.PATCH, "/order/{id}").hasRole(User.Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.POST, "/user/").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/user/").hasRole(User.Role.ADMIN.toString())
                     .requestMatchers("/user/*").authenticated();
         }).csrf(AbstractHttpConfigurer::disable).httpBasic(Customizer.withDefaults()).build();
     }

@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@RequestParam Long id){
+    public User getUserById(@PathVariable Long id){
         return service.getUserById(id);
     }
 
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User putUser(@RequestParam Long id, @RequestBody User user){
+    public User putUser(@PathVariable Long id, @RequestBody User user){
         if (!Objects.equals(user.getId(), id)){
             throw new IllegalArgumentException("Path id and one in request body don't match");
         }
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@RequestParam Long id){
+    public void deleteUser(@PathVariable Long id){
         service.deleteUserById(id);
     }
 }

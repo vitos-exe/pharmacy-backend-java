@@ -8,22 +8,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Executes set of methods needed for development/testing at startup
+ */
 @Component
-public class StartUpListener {
+@Profile({"dev", "test"})
+public class DevelopmentStartUpListener {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    public StartUpListener(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DevelopmentStartUpListener(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     /**
-     * Encodes initial users passwords(used only for development)
+     * Encodes initial users passwords
      */
     @EventListener(ApplicationReadyEvent.class)
-    @Profile("dev")
     @Transactional
     public void encodeInitialUsersPassword(){
         userRepository.findAll().forEach(user -> {
