@@ -1,6 +1,7 @@
 package com.example.demo.security;
 
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,17 +43,15 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public IdentityHolder identityHolder(UserService userService){
+    public IdentityHolder identityHolder(UserRepository userRepository){
         return () -> {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (Objects.isNull(authentication)){
                 throw new RuntimeException("Authentication object was requested but it is not present in security context");
             }
-            try {
-                return userService.getUserByEmail(authentication.getName());
-            } catch (NoSuchElementException e){
-                throw new RuntimeException("Authenticated user was not found in datasource");
-            }
+            return userRepository.findByEmailAddress(authentication.getName()).orElseThrow(
+                    () -> new RuntimeException("Authenticated user was not found in datasource")
+            );
         };
     }
 }
