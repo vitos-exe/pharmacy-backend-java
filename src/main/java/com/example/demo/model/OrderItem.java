@@ -20,7 +20,6 @@ public class OrderItem {
     @NoArgsConstructor
     public static class OrderItemPrimaryKey implements Serializable {
         @ManyToOne
-        @JsonBackReference
         private Order order;
 
         @ManyToOne

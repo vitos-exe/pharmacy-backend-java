@@ -27,7 +27,6 @@ public class Order {
     private Status status = Status.PENDING;
 
     @OneToMany(mappedBy = "id.order", fetch = FetchType.EAGER)
-    @JsonManagedReference
     private List<OrderItem> orderItems;
 
     @ManyToOne
