@@ -2,16 +2,15 @@ package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "\"order\"")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Order {
@@ -26,7 +25,7 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 
-    @OneToMany(mappedBy = "id.order", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "id.order")
     private List<OrderItem> orderItems;
 
     @ManyToOne

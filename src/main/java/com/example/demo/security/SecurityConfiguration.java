@@ -27,10 +27,10 @@ public class SecurityConfiguration {
                     .requestMatchers("/error").permitAll()
                     .requestMatchers(HttpMethod.GET, "/medicine/*").permitAll()
                     .requestMatchers("/medicine/*").hasRole(User.Role.ADMIN.toString())
-                    .requestMatchers("/order/{id}").authenticated()
+                    .requestMatchers("/order/*").authenticated()
                     .requestMatchers(HttpMethod.POST, "/order/").authenticated()
                     .requestMatchers(HttpMethod.GET, "/order/").hasRole(User.Role.ADMIN.toString())
-                    .requestMatchers(HttpMethod.PATCH, "/order/{id}").hasRole(User.Role.ADMIN.toString())
+                    .requestMatchers(HttpMethod.PATCH, "/order/**").hasRole(User.Role.ADMIN.toString())
                     .requestMatchers(HttpMethod.POST, "/user/").permitAll()
                     .requestMatchers(HttpMethod.GET, "/user/").hasRole(User.Role.ADMIN.toString())
                     .requestMatchers("/user/*").authenticated();

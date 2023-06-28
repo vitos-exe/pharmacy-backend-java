@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @Service
@@ -30,7 +31,7 @@ public class MedicineService {
 
     @Transactional
     public Medicine createMedicine(Medicine medicine){
-        repository.findById(medicine.getId()).ifPresent(__ -> {
+        Optional.ofNullable(medicine.getId()).flatMap(repository::findById).ifPresent(__ -> {
             throw new IllegalArgumentException("Medicine with this id already exists");
         });
         return repository.save(medicine);

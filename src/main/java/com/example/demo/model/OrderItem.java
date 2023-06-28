@@ -1,21 +1,19 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItem {
     @Embeddable
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class OrderItemPrimaryKey implements Serializable {

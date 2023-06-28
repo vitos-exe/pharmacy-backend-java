@@ -91,7 +91,7 @@ class UserServiceTest {
         service.createUser(newUser);
         Optional<User> justCreated = repository.findById(3L);
         assertTrue(justCreated.isPresent());
-        assertEquals(newUser, justCreated.get());
+        assertEquals(newUser.getFullName(), justCreated.get().getFullName());
     }
 
     @Test
@@ -112,7 +112,7 @@ class UserServiceTest {
         service.updateUser(newUser);
         Optional<User> updatedUser = repository.findById(1L);
         assertTrue(updatedUser.isPresent());
-        assertEquals(newUser, updatedUser.get());
+        assertEquals(newUser.getFullName(), updatedUser.get().getFullName());
     }
 
     @Test

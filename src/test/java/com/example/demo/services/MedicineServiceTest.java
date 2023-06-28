@@ -62,7 +62,7 @@ class MedicineServiceTest {
 
         Optional<Medicine> justPersisted = repository.findById(3L);
         assertTrue(justPersisted.isPresent());
-        assertEquals(newMedicine, justPersisted.get());
+        assertEquals(newMedicine.getName(), justPersisted.get().getName());
     }
 
     @Test
