@@ -33,8 +33,12 @@ public class MedicineController {
 
     @PutMapping("/{id}")
     public Medicine putMedicine(@PathVariable Long id, @RequestBody Medicine medicine){
-        if (!Objects.equals(medicine.getId(), id)){
-            throw new IllegalArgumentException("Path id and one in request body don't match");
+        if (medicine.getId() != null){
+            if (!medicine.getId().equals(id)){
+                throw new IllegalArgumentException("Id in path variable and in request body don't match");
+            }
+        } else {
+            medicine.setId(id);
         }
 
         return service.updateMedicine(medicine);
